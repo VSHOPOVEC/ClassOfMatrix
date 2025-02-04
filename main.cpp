@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Matrix.hpp"
-#include "Matrix_test .hpp"
 
 int main() {
 	std::vector<std::vector<double>> arr_m = { {1,2},{0,1},{0,1} };
@@ -8,6 +7,10 @@ int main() {
 	//Matrix matr1(arr_m, 2, 2); 
 	Matrix matr2(arr_m2, 2, 3); 
 	Matrix matr1(arr_m, 3, 2); 
-	(matr1*matr2).PrintMatrix();
+	Matrix matr(2, 2); 
+	matr = matr2 * matr1; 
+	matr.PrintMatrix(); 
+	double item = (*matr[1])[1]; 
+	std::cout << item << std::endl; 
 	return 0;
 }

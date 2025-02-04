@@ -23,6 +23,16 @@ private:
 	std::string message; 
 };
 
+class OutOfTheRange {
+public:
+	OutOfTheRange(std::string message) : message(message) {
+		std::cout << GetMessage() << std::endl;
+	};
+	std::string GetMessage() { return message; }
+private:
+	std::string message;
+};
+
 class InvalidValue {
 public:
 	InvalidValue(std::string message) : message(message) {
@@ -34,51 +44,61 @@ private:
 };
 
 class Matrix {
+private:
+	class MatrixRow {
+	public:
+		MatrixRow(double* matrixRow) : matrixRow(matrixRow) {}
+
+		double& operator[](int index) {
+			return matrixRow[index];
+		}
+	private:
+		double* matrixRow;
+	};
+
 public:
 	Matrix(std::vector<std::vector<double>> arr_massive, int rows, int columns);
+
 	Matrix(bool identity_matrix, int rows, int columns);
+
 	Matrix(int rows, int columns);
+
 	~Matrix();
+
 	Matrix operator + (const Matrix& matrix) const;
+
 	Matrix operator - (const Matrix& matrix) const;
+
 	Matrix operator - ()const; 
+
 	Matrix operator * (const Matrix& matrix) const;
+
 	Matrix& operator = (const Matrix& matrix);
-	//static double Determinant(const Matrix& matrix);
+
+	MatrixRow* operator[](int index) {
+		MatrixRow curr_Row = MatrixRow(matrix_arr[index]);
+		return &curr_Row;
+	}
+
 	void PrintMatrix();
+
+	static Matrix TransposeMatrix(const Matrix& matrix); 
 private:
 	int columns;
+
 	int rows;
+
 	double** matrix_arr;
-	void CreateMatrixArr(int rows, int columns) {
-		matrix_arr = new double* [rows];
-		for (int i = 0; i < rows; ++i) {
-			matrix_arr[i] = new double[columns];
-		}
-	}
-	void ErrorInvalidValue(int rows, int columns){
-		if (rows <= 0 || columns <= 0) {
-			throw InvalidValue("Colums and Rows can't be a negative number");
-		}
-	}
-	void ErrorInvalidSizeOfArray(int rows, int columns, const std::vector<std::vector<double>>& arr) {
-		int arr_size = arr.size(); 
-		if (arr_size == rows) {
-			int k = 0; 
-			for (int i = 0; i < arr_size; ++i) {
-				if (arr[i].size() != columns) {
-					k += 1; 
-				}
-			}
-			if (k != 0) {
-				throw InvalidSizeOfArray("Invalid size of columns"); 
-			}
-		}
-		else {
-			throw InvalidSizeOfArray("Invalid size of rows"); 
-		}
-	}
+
+	void CreateMatrixArr(int rows, int columns);
+
+	void ErrorInvalidValue(int rows, int columns);
+
+	void ErrorInvalidSizeOfArray(int rows, int columns, const std::vector<std::vector<double>>& arr);
 };
+
+
+//Constructors Matrix
 
 Matrix::Matrix(std::vector<std::vector<double>> arr_massive, int rows, int columns):rows(rows), columns(columns)
 {
@@ -134,6 +154,9 @@ Matrix::~Matrix() {
 	}
 	delete[] matrix_arr;
 }
+
+
+//Operators Matrix
 
 Matrix Matrix::operator+(const Matrix& matrix) const
 {
@@ -211,13 +234,7 @@ Matrix& Matrix::operator=(const Matrix& matrix)
 	}
 }
 
-//double Matrix::Determinant(const Matrix& matrix)
-//{
-//	double Det = 0;
-//	for (int i = 0; i < matrix.columns; ++i) {
-//		matrix.matrix_arr[0][i] * pow(-1, i)*
-//	}
-//}
+//Methods of class Matrix
 
 void Matrix::PrintMatrix() {
 	for (int i = 0; i < rows; ++i) {
@@ -227,3 +244,51 @@ void Matrix::PrintMatrix() {
 		std::cout << std::endl;
 	}
 }
+
+Matrix Matrix::TransposeMatrix(const Matrix& matrix)
+{
+	Matrix result(matrix.columns, matrix.rows); 
+	for (int i = 0; i < matrix.rows; ++i) {
+		for (int j = 0; j < matrix.columns; ++j) {
+			result.matrix_arr[j][i] = matrix.matrix_arr[i][j]; 
+		}
+	}
+	return result; 
+}
+
+inline void Matrix::CreateMatrixArr(int rows, int columns)
+{
+	matrix_arr = new double* [rows];
+	for (int i = 0; i < rows; ++i) {
+		matrix_arr[i] = new double[columns];
+	}
+}
+
+inline void Matrix::ErrorInvalidValue(int rows, int columns)
+{
+	if (rows <= 0 || columns <= 0) {
+		throw InvalidValue("Colums and Rows can't be a negative number");
+	}
+}
+
+inline void Matrix::ErrorInvalidSizeOfArray(int rows, int columns, const std::vector<std::vector<double>>& arr)
+{
+	int arr_size = int(arr.size());
+	if (arr_size == rows) {
+		int k = 0;
+		for (int i = 0; i < arr_size; ++i) {
+			if (arr[i].size() != columns) {
+				k += 1;
+			}
+		}
+		if (k != 0) {
+			throw InvalidSizeOfArray("Invalid size of columns");
+		}
+	}
+	else {
+		throw InvalidSizeOfArray("Invalid size of rows");
+	}
+}
+
+
+//auxiliary class MatrixRow
