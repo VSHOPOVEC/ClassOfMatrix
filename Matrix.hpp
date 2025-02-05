@@ -1,7 +1,4 @@
-#include <vector>
-#include <iostream>
-#include <string>
-#include <cmath>
+#include "include.hpp"
 
 class Matrix {
 private:
