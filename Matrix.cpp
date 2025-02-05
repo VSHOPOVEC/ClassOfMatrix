@@ -1,12 +1,12 @@
 #include "Matrix.hpp"
 
-
 class Error;
-
 //Constructors Matrix
-Matrix::Matrix(std::vector<std::vector<double>> arr_massive, int rows, int columns) :rows(rows), columns(columns)
+Matrix::Matrix(std::vector<std::vector<double>> arr_massive)
 {
-	InvalidValueArray(this->rows, this->columns, arr_massive);
+	size_t rowsSize = arr_massive.size();
+	size_t columnsSize = InvalidValueArray(arr_massive);
+	this->rows = int(rowsSize); this->columns = int(columnsSize); 
 	CreateMatrixArr(this->rows, this->columns);
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < columns; ++j) {
@@ -15,8 +15,7 @@ Matrix::Matrix(std::vector<std::vector<double>> arr_massive, int rows, int colum
 	}
 }
 
-Matrix::Matrix(bool identity_matrix = true, int rows = 3, int columns = 3) :rows(rows), columns(columns) {
-	InvalidValueArray(this->rows, this->columns);
+Matrix::Matrix(bool identity_matrix, int rows, int columns) :rows(fabs(rows)), columns(fabs(rows)) {
 	CreateMatrixArr(this->rows, this->columns);
 	if (identity_matrix == true) {
 		for (int i = 0; i < rows; ++i) {
@@ -40,9 +39,8 @@ Matrix::Matrix(bool identity_matrix = true, int rows = 3, int columns = 3) :rows
 	}
 }
 
-Matrix::Matrix(int rows, int columns) :rows(rows), columns(columns)
+Matrix::Matrix(int rows, int columns) :rows(fabs(rows)), columns(fabs(columns))
 {
-	InvalidValueArray(this->rows, this->columns);
 	CreateMatrixArr(this->rows, this->columns);
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < columns; ++j) {
@@ -53,11 +51,25 @@ Matrix::Matrix(int rows, int columns) :rows(rows), columns(columns)
 
 Matrix::Matrix(Matrix const& matrix) :rows(matrix.rows), columns(matrix.columns)
 {
-	InvalidValueArray(rows, columns);
 	CreateMatrixArr(rows, columns);
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < columns; ++j) {
 			this->matrix_arr[i][j] = matrix.matrix_arr[i][j];
+		}
+	}
+}
+
+Matrix::Matrix() :rows(3), columns(3)
+{
+	CreateMatrixArr(this->rows, this->columns);
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < columns; ++j) {
+			if (i == j) {
+				matrix_arr[i][j] = 1;
+			}
+			else {
+				matrix_arr[i][j] = 0;
+			}
 		}
 	}
 }
@@ -132,7 +144,7 @@ Matrix Matrix::operator*(const Matrix& matrix) const
 	}
 }
 
-Matrix* Matrix::operator=(const Matrix& matrix)
+Matrix& Matrix::operator=(const Matrix& matrix)
 {
 	for (int i = 0; i < rows; ++i) {
 		delete[] matrix_arr[i];
@@ -150,9 +162,7 @@ Matrix* Matrix::operator=(const Matrix& matrix)
 		}
 	}
 
-	return this;
-
-
+	return *this;
 
 	//Версия оператора присваивания для матриц одного размера
 	/*if (matrix.rows != this->rows || matrix.columns != this->columns) {
@@ -179,7 +189,7 @@ void Matrix::PrintMatrix() {
 	}
 }
 
-Matrix* Matrix::TransposeMatrix()
+Matrix& Matrix::TransposeMatrix()
 {
 	Matrix result(*this);
 	for (int i = 0; i < rows; ++i) {
@@ -194,13 +204,14 @@ Matrix* Matrix::TransposeMatrix()
 		matrix_arr[i] = new double[rows];
 	}
 
+
 	for (int i = 0; i < this->rows; ++i) {
 		for (int j = 0; j < this->columns; ++j) {
 			matrix_arr[j][i] = result.matrix_arr[i][j];
 		}
 	}
 	rows = columns; columns = temp_rows;
-	return this;
+	return *this;
 }
 
 void Matrix::CreateMatrixArr(int rows, int columns)
@@ -211,35 +222,24 @@ void Matrix::CreateMatrixArr(int rows, int columns)
 	}
 }
 
-void Matrix::InvalidValueArray(int rows, int columns)
+size_t Matrix::InvalidValueArray(const std::vector<std::vector<double>>& arr)
 {
-	if ((rows <= 0) || (columns <= 0)) {
-		throw Matrix::Error("Colums and Rows can't be a negative number");
-	}
-}
-
-void Matrix::InvalidValueArray(int rows, int columns, const std::vector<std::vector<double>>& arr) //Используется исключительно в конструкторе 
-{
-	int arr_size = int(arr.size());
-	if ((rows <= 0) || (columns <= 0)) {
-		throw Matrix::Error("Colums and Rows can't be a negative number");
-	}
-	else {
-		if (arr_size == rows) {
-			int k = 0;
-			for (int i = 0; i < arr_size; ++i) {
-				if (arr[i].size() != columns) {
-					k += 1;
-				}
-			}
-			if (k != 0) {
-				throw Matrix::Error("Invalid size of columns");
-			}
+	size_t amountOfRows = arr.size();
+	size_t currentSizeArr = 0;
+	bool firstElement = true; 
+	for (auto rowArr: arr) {
+		if (firstElement == true) {
+			currentSizeArr = rowArr.size(); 
+			firstElement = false; 
 		}
 		else {
-			throw Matrix::Error("Invalid size of rows");
+			if (rowArr.size() != currentSizeArr) {
+				throw Matrix::Error("Wrong vector size");
+				break;  
+			}
 		}
 	}
+	return currentSizeArr; 
 }
 
 

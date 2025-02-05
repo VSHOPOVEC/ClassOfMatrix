@@ -6,8 +6,8 @@ private:
 	public:
 		MatrixRow(double* matrixRow) : matrixRow(matrixRow) {}
 
-		double& operator[](int index) {
-			return matrixRow[index];
+		double* operator[](int index) {
+			return &matrixRow[index];
 		}
 	private:
 		double* matrixRow;
@@ -25,13 +25,15 @@ private:
 
 public:
 
-	Matrix(std::vector<std::vector<double>> arr_massive, int rows, int columns);
+	Matrix(std::vector<std::vector<double>> arr_massive);
 
 	Matrix(bool identity_matrix, int rows, int columns);
 
 	Matrix(int rows, int columns);
 
-	Matrix(Matrix const& matrix);
+	Matrix(const Matrix& matrix);
+
+	Matrix(); 
 
 	~Matrix();
 
@@ -43,17 +45,16 @@ public:
 
 	Matrix operator * (const Matrix& matrix) const;
 
-	Matrix* operator = (const Matrix& matrix);
+	Matrix& operator = (const Matrix& matrix);
 
 	MatrixRow* operator[](int index) {
 		MatrixRow curr_Row = MatrixRow(matrix_arr[index]);
 		return &curr_Row;
 	}
-
-	Matrix* TransposeMatrix();
+	//Для взятия какого-то элемента необходим синтаксис std::cout << (*(*(matr + matr2)[row])[column]);
+	Matrix& TransposeMatrix();
 
 	void PrintMatrix();
-
 private:
 
 	int columns;
@@ -64,7 +65,5 @@ private:
 
 	void CreateMatrixArr(int rows, int columns);
 
-	void InvalidValueArray(int rows, int columns, const std::vector<std::vector<double>>& arr);
-
-	void InvalidValueArray(int rows, int columns);
+	size_t InvalidValueArray(const std::vector<std::vector<double>>& arr);
 };
