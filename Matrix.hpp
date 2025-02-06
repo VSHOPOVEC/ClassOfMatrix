@@ -3,17 +3,21 @@
 template <typename T>
 class Matrix {
 private:
-
-	class Error {
+	class MatrixRow {
 	public:
-		Error(std::string message) : message(message) {
-			std::cout << GetMessage() << std::endl;
-		};
-		std::string GetMessage() { return message; }
+		MatrixRow(T** in_matrix_arr,int columns) : columns(columns), matrix_arr(in_matrix_arr){}
+		T* operator[] (int index) {
+			if (index < 0 || columns < index) {
+				throw std::invalid_argument("Invalid index");
+			}
+			else {
+				return matrix_arr[index];
+			}
+		}
 	private:
-		std::string message;
+		T** matrix_arr; 
+		int columns;
 	};
-
 public:
 
 	Matrix(std::vector<std::vector<T>> arr_massive);
@@ -231,9 +235,15 @@ Matrix<T>& Matrix<T>::operator=(const Matrix& matrix)
 	return *this;
 }
 
+class MatrixRow; 
 template<typename T>
 T* Matrix<T>::operator[](int index) {
-	return matrix_arr[index];
+	if (index < 0 || rows < index) {
+		throw std::invalid_argument("Invalid index of rows");
+	}
+	else {
+		return MatrixRow(matrix_arr, columns)[index];
+	}
 }
 
 //Methods of class Matrix
@@ -294,7 +304,7 @@ size_t Matrix<T>::InvalidValueArray(const std::vector<std::vector<T>>& arr)
 		}
 		else {
 			if (rowArr.size() != currentSizeArr) {
-				throw Matrix::Error("Wrong vector size");
+				throw std::invalid_argument("Invalid index");
 				break;
 			}
 		}

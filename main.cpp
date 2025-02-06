@@ -8,7 +8,10 @@ int main() {
 	Matrix<double> matr1(arr1); 
 	std::cout << matr[0][0] << std::endl;
 	matr.PrintMatrix(); 
-	matr[0][0] = 2; 
+	matr[1][0] = 3; 
 	matr.PrintMatrix(); 
+	//            1 2 3
+	//  matrix =  4 5 6 if u wanna to get the last elements in the first 
+	//            7 8 9 row u have to matrix[0][2];  
 	return 0;
 }
