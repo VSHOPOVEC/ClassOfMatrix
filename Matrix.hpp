@@ -6,8 +6,8 @@ private:
 	public:
 		MatrixRow(double* matrixRow) : matrixRow(matrixRow) {}
 
-		double* operator[](int index) {
-			return &matrixRow[index];
+		double operator[](int index) {
+			return matrixRow[index];
 		}
 	private:
 		double* matrixRow;
@@ -47,11 +47,9 @@ public:
 
 	Matrix& operator = (const Matrix& matrix);
 
-	MatrixRow* operator[](int index) {
-		MatrixRow curr_Row = MatrixRow(matrix_arr[index]);
-		return &curr_Row;
+	MatrixRow operator[](int index) {
+		return MatrixRow(matrix_arr[index]);
 	}
-	//Для взятия какого-то элемента необходим синтаксис std::cout << (*(*(matr + matr2)[row])[column]);
 	Matrix& TransposeMatrix();
 
 	void PrintMatrix();

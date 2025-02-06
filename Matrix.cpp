@@ -153,9 +153,7 @@ Matrix& Matrix::operator=(const Matrix& matrix)
 	matrix_arr = new double* [matrix.rows];
 	columns = matrix.columns;
 	rows = matrix.rows;
-	for (int i = 0; i < rows; ++i) {
-		matrix_arr[i] = new double[columns];
-	}
+	CreateMatrixArr(rows, columns);
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < columns; ++j) {
 			matrix_arr[i][j] = matrix.matrix_arr[i][j];

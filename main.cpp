@@ -7,7 +7,7 @@ int main() {
 	Matrix matr(arr);
 	Matrix matr2(arr1);
 	(matr + matr2).PrintMatrix(); 
-	std::cout << (*(*(matr + matr2)[1])[0]);
+	std::cout << (matr + matr2)[1][0];
 	Matrix matr6 = matr; 
 	return 0;
 }
