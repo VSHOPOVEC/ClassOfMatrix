@@ -226,4 +226,72 @@ namespace dVector {
 		tempVector -= dvector2;
 		return tempVector;
 	}
+
+	class dVector4d {
+	public:
+		friend class dVector<double>;
+		dVector4d(std::vector<double>& vector) {
+			if (vector.size() != 4) {
+				throw std::invalid_argument("invalid size in dVector3d");
+			}
+			else {
+				dvector = new dVector<double>(vector);
+			}
+		}
+
+		dVector4d(double x = 1, double y = 1, double z = 1, double t = 1) {
+			std::vector<double> tVector = { x,y,z,t}; dvector = new dVector<double>(tVector);
+		}
+
+		dVector4d(const dVector4d& copy_vector) {
+			dvector = new dVector<double>((*copy_vector.dvector));
+		}
+
+		~dVector4d() {
+			delete dvector;
+		};
+
+		dVector4d& operator= (const dVector4d& dVector_) {
+			if (dvector == dVector_.dvector) {
+				return *this;
+			}
+			else {
+				delete dvector;
+				dvector = new dVector<double>((*dVector_.dvector));
+				return *this;
+			}
+		};
+
+		dVector4d& operator+= (const dVector4d& dVector) {
+			*(this->dvector) += *dVector.dvector;
+			return *this;
+		};
+
+		dVector4d& operator-= (const dVector4d& dVector) {
+			*(this->dvector) -= *dVector.dvector;
+			return *this;
+		};
+
+		void PrintVector() { (*dvector).PrintVector(); };
+
+	private:
+		dVector<double>* dvector;
+	};
+
+	inline dVector4d operator+(const dVector4d& dvector1, const dVector4d& dvector2)
+	{
+		dVector4d tempVector;
+		tempVector = dvector1;
+		tempVector += dvector2;
+		return tempVector;
+	}
+
+	inline dVector4d operator-(const dVector4d& dvector1, const dVector4d& dvector2)
+	{
+		dVector4d tempVector;
+		tempVector = dvector1;
+		tempVector -= dvector2;
+		return tempVector;
+	}
+
 }
